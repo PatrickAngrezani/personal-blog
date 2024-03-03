@@ -1,36 +1,21 @@
-import express from "express";
+// @ts-ignore
+import express, { Application } from "express";
 import cors from "cors";
-import pkg from "pg";
+import { connectToDatabase } from "./db/db.js";
 
-const PORT: number = 8000;
-const app = express();
-app.use(cors());
+const startServer = async () => {
+  await connectToDatabase();
 
-const { Client } = pkg;
+  const app: Application = express();
+  const PORT: number = 8000;
+  app.use(cors());
+  app.use(express.json());
 
-const db = new Client({
-  user: "postgres",
-  host: "localhost",
-  database: "postgres",
-  password: "postgres",
-  port: 5434,
-});
+  const server = app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
 
-app.get("", async (req: any, res: any) => {
-  try {
-    await db.connect();
-    console.log('endponit requested');
-    res.send("Success");
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Internal Server Error");
-  } finally {
-    await db.end();
-  }
-});
+  return server;
+};
 
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-
-export default server;
+startServer();
