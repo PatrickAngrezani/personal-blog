@@ -33,4 +33,21 @@ export default class UserModel {
       client.release();
     }
   }
+
+  async deleteUser(id: string) {
+    const client = await pool.connect();
+
+    try {
+      const result: QueryResult = await client.query(
+        "DELETE FROM blog.users WHERE id = $1",
+        [id]
+      );
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error("Error deleting user");
+    } finally {
+      client.release();
+    }
+  }
 }

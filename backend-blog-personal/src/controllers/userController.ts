@@ -5,7 +5,10 @@ export class UserController {
   constructor(private readonly userModel: UserModel) {}
 
   async createUser(createUserDto: CreateUserDto) {
-    const newUser = await this.userModel.createUser(createUserDto);
-    return newUser;
+    return await this.userModel.createUser(createUserDto);
+  }
+
+  async deleteUser(id: string) {
+    return await this.userModel.deleteUser(id);
   }
 }
