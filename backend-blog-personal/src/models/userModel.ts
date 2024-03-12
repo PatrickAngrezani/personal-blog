@@ -50,4 +50,21 @@ export default class UserModel {
       client.release();
     }
   }
+
+  async softDelete(id: string) {
+    const client = await pool.connect();
+
+    try {
+      const result: QueryResult = await client.query(
+        "UPDATE blog.users SET deleted_at = NOW() WHERE id = $1",
+        [id]
+      );
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error("Error soft deleting user");
+    } finally {
+      client.release();
+    }
+  }
 }

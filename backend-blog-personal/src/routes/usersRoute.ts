@@ -19,7 +19,7 @@ userRouter.post("/create", async (req, res, next) => {
   }
 });
 
-userRouter.delete("/:id", async (req, res, next) => {
+userRouter.delete("/hard_delete/:id", async (req, res, next) => {
   const id = req.params.id;
 
   if (!id) {
@@ -29,6 +29,21 @@ userRouter.delete("/:id", async (req, res, next) => {
   try {
     await userController.deleteUser(id);
     res.status(201).json("user deleted succesfully");
+  } catch (error) {
+    next(error);
+  }
+});
+
+userRouter.delete("/:id", async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!id) {
+    res.status(400).send("invalid parameter");
+  }
+
+  try {
+    await userController.softDelete(id);
+    res.status(201).json("user soft deleted succesfully");
   } catch (error) {
     next(error);
   }

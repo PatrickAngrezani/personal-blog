@@ -11,4 +11,8 @@ export class UserController {
   async deleteUser(id: string) {
     return await this.userModel.deleteUser(id);
   }
+
+  async softDelete(id: string) {
+    return await this.userModel.softDelete(id);
+  }
 }
