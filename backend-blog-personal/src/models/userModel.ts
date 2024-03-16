@@ -13,16 +13,20 @@ export default class UserModel {
   async createUser(dto: CreateUserDto): Promise<any> {
     const client = await pool.connect();
 
+    if (!dto.email || !dto.nationalId)
+      throw new Error("missing email or national_id");
+
     const users = await this.checkExistingUsers(dto);
     if (users) throw new Error("email or national_id is not available");
 
     try {
       const result: QueryResult = await client.query(
-        "INSERT INTO blog.user (first_name, last_name, email, post_limit, blocked, number_of_comments) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        "INSERT INTO blog.user (first_name, last_name, email, national_id, post_limit, blocked, number_of_comments) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
         [
           dto.firstName,
           dto.lastName,
           dto.email,
+          dto.nationalId,
           dto.postLimit || 10,
           false,
           dto.numberOfComments || 100,
@@ -31,6 +35,7 @@ export default class UserModel {
 
       return result.rows[0];
     } catch (error) {
+      console.error({ error });
       throw new Error("Error creating user");
     } finally {
       client.release();
@@ -48,6 +53,7 @@ export default class UserModel {
 
       return result.rows[0];
     } catch (error) {
+      console.error({ error });
       throw new Error("Error deleting user");
     } finally {
       client.release();
@@ -59,12 +65,13 @@ export default class UserModel {
 
     try {
       const result: QueryResult = await client.query(
-        "UPDATE blog.users SET deleted_at = NOW() WHERE id = $1",
+        "UPDATE blog.user SET deleted_at = NOW() WHERE id = $1",
         [id]
       );
 
       return result.rows[0];
     } catch (error) {
+      console.error({ error });
       throw new Error("Error soft deleting user");
     } finally {
       client.release();
