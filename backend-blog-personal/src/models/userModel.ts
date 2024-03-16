@@ -1,5 +1,6 @@
-import { CreateUserDto } from "../db/dto/createUserDto";
+import { CreateUserDto } from "../db/dto/createUserDto.dto";
 import { Pool, QueryResult } from "pg";
+import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -78,6 +79,39 @@ export default class UserModel {
     }
   }
 
+  async getUsers(id?: string): Promise<GetUsersResponseDto[] | string> {
+    const client = await pool.connect();
+    let users: GetUsersResponseDto[] = [];
+
+    try {
+      if (!id) {
+        const result: QueryResult = await client.query(
+          "SELECT first_name, last_name, email, national_id FROM blog.user"
+        );
+
+        users = result.rows.map(this.rowToDto);
+      } else {
+        const query = `SELECT first_name, last_name, email, national_id FROM blog.user WHERE id = $1`;
+        const values = [id];
+
+        const result = await client.query(query, values);
+
+        if (result.rows.length > 0) {
+          users = result.rows.map(this.rowToDto);
+        } else {
+          return "User not found";
+        }
+      }
+
+      return users;
+    } catch (error) {
+      console.error(error);
+      throw new Error();
+    } finally {
+      client.release();
+    }
+  }
+
   async checkExistingUsers(dto: CreateUserDto) {
     const client = await pool.connect();
 
@@ -110,5 +144,14 @@ export default class UserModel {
     } finally {
       client.release();
     }
+  }
+
+  rowToDto(row: any) {
+    return new GetUsersResponseDto(
+      row.first_name,
+      row.last_name,
+      row.email,
+      row.national_id
+    );
   }
 }

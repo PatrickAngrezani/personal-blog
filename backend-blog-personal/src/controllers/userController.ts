@@ -1,4 +1,5 @@
-import { CreateUserDto } from "../db/dto/createUserDto";
+import { CreateUserDto } from "../db/dto/createUserDto.dto";
+import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
 import UserModel from "../models/userModel";
 
 export class UserController {
@@ -14,5 +15,9 @@ export class UserController {
 
   async softDelete(id: string) {
     return await this.userModel.softDelete(id);
+  }
+
+  async getUsers(id?: string): Promise<GetUsersResponseDto[] | string> {
+    return await this.userModel.getUsers(id);
   }
 }

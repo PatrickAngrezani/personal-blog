@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { UserController } from "../controllers/userController";
 import UserModel from "../models/userModel";
-import { CreateUserDto } from "../db/dto/createUserDto";
+import { CreateUserDto } from "../db/dto/createUserDto.dto";
 
 const userModel = new UserModel();
 const userController = new UserController(userModel);
@@ -44,6 +44,17 @@ userRouter.delete("/:id", async (req, res, next) => {
   try {
     await userController.softDelete(id);
     res.status(201).json("user soft deleted succesfully");
+  } catch (error) {
+    next(error);
+  }
+});
+
+userRouter.get("/:id?", async (req, res, next) => {
+  const id = req.params.id;
+
+  try {
+    const users = await userController.getUsers(id);
+    res.status(201).json(users);
   } catch (error) {
     next(error);
   }
