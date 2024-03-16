@@ -14,10 +14,11 @@ export default class UserModel {
     const client = await pool.connect();
 
     const users = await this.checkExistingUsers(dto);
+    if (users) throw new Error("email or national_id is not available");
 
     try {
       const result: QueryResult = await client.query(
-        "INSERT INTO blog.users (first_name, last_name, email, post_limit, blocked, number_of_comments) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        "INSERT INTO blog.user (first_name, last_name, email, post_limit, blocked, number_of_comments) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
         [
           dto.firstName,
           dto.lastName,
