@@ -80,7 +80,7 @@ export default class UserModel {
     }
   }
 
-  async getUsers(id?: string): Promise<GetUsersResponseDto[] | string> {
+  async getUsers(id?: string): Promise<GetUsersResponseDto[]> {
     const client = await pool.connect();
     let users: GetUsersResponseDto[] = [];
 
@@ -106,8 +106,7 @@ export default class UserModel {
 
       return users;
     } catch (error) {
-      console.error(error);
-      throw new NotFoundException("User not found");
+      throw error;
     } finally {
       client.release();
     }

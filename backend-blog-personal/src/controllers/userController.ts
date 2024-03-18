@@ -17,7 +17,7 @@ export class UserController {
     return await this.userModel.softDelete(id);
   }
 
-  async getUsers(id?: string): Promise<GetUsersResponseDto[] | string> {
+  async getUsers(id?: string): Promise<GetUsersResponseDto[]> {
     return await this.userModel.getUsers(id);
   }
 }
