@@ -1,6 +1,7 @@
 import { CreateUserDto } from "../db/dto/createUserDto.dto";
 import { Pool, QueryResult } from "pg";
 import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
+import { NotFoundException } from "../errors/notFoundException";
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -99,14 +100,14 @@ export default class UserModel {
         if (result.rows.length > 0) {
           users = result.rows.map(this.rowToDto);
         } else {
-          return "User not found";
+          throw new NotFoundException("User not found");
         }
       }
 
       return users;
     } catch (error) {
       console.error(error);
-      throw new Error();
+      throw new NotFoundException("User not found");
     } finally {
       client.release();
     }
