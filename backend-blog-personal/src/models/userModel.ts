@@ -66,15 +66,18 @@ export default class UserModel {
     const client = await pool.connect();
 
     try {
+      const checkDeletedUser = await this.getUsers(id);
+      if (checkDeletedUser[0].deletedAt)
+        throw new Error("User already soft deleted");
+
       const result: QueryResult = await client.query(
         "UPDATE blog.user SET deleted_at = NOW() WHERE id = $1",
         [id]
       );
 
-      return result.rows[0];
+      return result.rows;
     } catch (error) {
-      console.error({ error });
-      throw new Error("Error soft deleting user");
+      throw error;
     } finally {
       client.release();
     }
@@ -87,12 +90,12 @@ export default class UserModel {
     try {
       if (!id) {
         const result: QueryResult = await client.query(
-          "SELECT first_name, last_name, email, national_id FROM blog.user"
+          "SELECT first_name, last_name, email, national_id, deleted_at FROM blog.user"
         );
 
         users = result.rows.map(this.rowToDto);
       } else {
-        const query = `SELECT first_name, last_name, email, national_id FROM blog.user WHERE id = $1`;
+        const query = `SELECT first_name, last_name, email, national_id, deleted_at FROM blog.user WHERE id = $1`;
         const values = [id];
 
         const result = await client.query(query, values);
@@ -151,7 +154,8 @@ export default class UserModel {
       row.first_name,
       row.last_name,
       row.email,
-      row.national_id
+      row.national_id,
+      row.deleted_at
     );
   }
 }

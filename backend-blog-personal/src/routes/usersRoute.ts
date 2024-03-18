@@ -35,7 +35,7 @@ userRouter.delete("/hard_delete/:id", async (req, res, next) => {
   }
 });
 
-userRouter.delete("/:id", async (req, res, next) => {
+userRouter.delete("/:id", async (req, res) => {
   const id = req.params.id;
 
   if (!id) {
@@ -44,9 +44,10 @@ userRouter.delete("/:id", async (req, res, next) => {
 
   try {
     await userController.softDelete(id);
-    res.status(201).json("user soft deleted succesfully");
+    res.status(200).json("user(s) soft deleted succesfully");
   } catch (error) {
-    next(error);
+    console.error(error);
+    res.status(500).json({ message: "Error soft deleting user(s)" });
   }
 });
 
