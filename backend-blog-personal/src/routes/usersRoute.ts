@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import { UserController } from "../controllers/userController";
 import UserModel from "../models/userModel";
 import { CreateUserDto } from "../db/dto/createUserDto.dto";
+import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
 
 const userModel = new UserModel();
 const userController = new UserController(userModel);
@@ -49,13 +50,14 @@ userRouter.delete("/:id", async (req, res, next) => {
   }
 });
 
-userRouter.get("/:id?", async (req, res, next) => {
+userRouter.get("/:id?", async (req, res) => {
   const id = req.params.id;
 
   try {
-    const users = await userController.getUsers(id);
-    res.status(201).json(users);
+    const users: GetUsersResponseDto[] = await userController.getUsers(id);
+    res.status(200).json(users);
   } catch (error) {
-    next(error);
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving users" });
   }
 });
