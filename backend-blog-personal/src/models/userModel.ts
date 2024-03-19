@@ -49,7 +49,7 @@ export default class UserModel {
 
     try {
       const result: QueryResult = await client.query(
-        "DELETE FROM blog.users WHERE id = $1",
+        "DELETE FROM blog.user WHERE id = $1",
         [id]
       );
 
