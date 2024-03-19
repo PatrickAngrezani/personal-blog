@@ -13,10 +13,10 @@ userRouter.post("/create", async (req, res, next) => {
   const dto: CreateUserDto = req.body;
 
   try {
-    const result = await userController.createUser(dto);
-    res.status(201).json(result);
+    res.status(201).json(await userController.createUser(dto));
   } catch (error) {
-    next(error);
+    console.error(error);
+    res.status(500).json({ message: "Error creating user" });
   }
 });
 

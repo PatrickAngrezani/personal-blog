@@ -3,6 +3,7 @@ import { Pool, QueryResult } from "pg";
 import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
 import { NotFoundException } from "../errors/notFoundException";
 import { DeleteUserResponseDto } from "../db/dto/response/deleteUserResponseDto.dto";
+import { CreateUserResponseDto } from "../db/dto/response/createUserResponseDto.dto";
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -36,10 +37,14 @@ export default class UserModel {
         ]
       );
 
-      return result.rows[0];
+      const response: CreateUserResponseDto = {
+        email: result.rows[0].email,
+        nationalId: result.rows[0].national_id,
+      };
+
+      return response;
     } catch (error) {
-      console.error({ error });
-      throw new Error("Error creating user");
+      throw error;
     } finally {
       client.release();
     }
