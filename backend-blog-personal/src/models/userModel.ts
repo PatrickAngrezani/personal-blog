@@ -4,6 +4,8 @@ import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
 import { NotFoundException } from "../errors/notFoundException";
 import { DeleteUserResponseDto } from "../db/dto/response/deleteUserResponseDto.dto";
 import { CreateUserResponseDto } from "../db/dto/response/createUserResponseDto.dto";
+import { UpdateUserDto } from "../db/dto/updateUserDto.dto";
+import { UpdateUserResponseDto } from "../db/dto/response/updateUserResponseDto.dto";
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -14,7 +16,7 @@ const pool = new Pool({
 });
 
 export default class UserModel {
-  async createUser(dto: CreateUserDto): Promise<any> {
+  async createUser(dto: CreateUserDto): Promise<CreateUserResponseDto> {
     const client = await pool.connect();
 
     if (!dto.email || !dto.nationalId)
@@ -123,6 +125,50 @@ export default class UserModel {
 
       return users;
     } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async updateUser(dto: UpdateUserDto): Promise<UpdateUserResponseDto> {
+    const client = await pool.connect();
+
+    const user = await this.getUsers(dto.id);
+    if (!user) throw new NotFoundException("User not found");
+
+    try {
+      const query = `
+        UPDATE blog.user
+        SET first_name = $1,
+          last_name = $2,
+          email = $3,
+          user_token = $4,
+          post_limit = $5,
+          number_of_comments = $6
+        WHERE id = $7
+        RETURNING id;
+`;
+
+      const updateData = [
+        dto.firstName,
+        dto.lastName,
+        dto.email,
+        dto.userToken,
+        dto.postLimit,
+        dto.numberOfComments,
+        dto.id,
+      ];
+
+      const result: QueryResult = await client.query(query, updateData);
+      const response: UpdateUserResponseDto = {
+        id: result.rows[0].id,
+        updatedAt: this.formatDate(Date.now()),
+      };
+
+      return response;
+    } catch (error) {
+      console.error(error);
       throw error;
     } finally {
       client.release();

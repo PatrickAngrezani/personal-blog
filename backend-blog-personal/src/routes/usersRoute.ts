@@ -3,6 +3,7 @@ import { UserController } from "../controllers/userController";
 import UserModel from "../models/userModel";
 import { CreateUserDto } from "../db/dto/createUserDto.dto";
 import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
+import { UpdateUserDto } from "../db/dto/updateUserDto.dto";
 
 const userModel = new UserModel();
 const userController = new UserController(userModel);
@@ -59,5 +60,16 @@ userRouter.get("/:id?", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error retrieving users" });
+  }
+});
+
+userRouter.put("/update", async (req, res) => {
+  const dto: UpdateUserDto = req.body;
+
+  try {
+    res.status(200).json(await userController.updateUser(dto));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error updating user" });
   }
 });
