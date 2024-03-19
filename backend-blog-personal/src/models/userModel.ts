@@ -49,15 +49,18 @@ export default class UserModel {
     const client = await pool.connect();
 
     try {
-      const result: QueryResult = await client.query(
-        "DELETE FROM blog.user WHERE id = $1",
-        [id]
-      );
+      const checkDeletedUser = await this.getUsers(id);
+      if (!checkDeletedUser) throw new NotFoundException("User not found");
+      await client.query("DELETE FROM blog.user WHERE id = $1", [id]);
 
-      return result.rows[0];
+      const response: DeleteUserResponseDto = {
+        id,
+        deletedAt: this.formatDate(Date.now()),
+      };
+
+      return response;
     } catch (error) {
-      console.error({ error });
-      throw new Error("Error deleting user");
+      throw error;
     } finally {
       client.release();
     }

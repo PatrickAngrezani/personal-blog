@@ -20,7 +20,7 @@ userRouter.post("/create", async (req, res, next) => {
   }
 });
 
-userRouter.delete("/hard_delete/:id", async (req, res, next) => {
+userRouter.delete("/hard_delete/:id", async (req, res) => {
   const id = req.params.id;
 
   if (!id) {
@@ -28,10 +28,10 @@ userRouter.delete("/hard_delete/:id", async (req, res, next) => {
   }
 
   try {
-    await userController.deleteUser(id);
-    res.status(201).json("user deleted succesfully");
+    res.status(201).json(await userController.deleteUser(id));
   } catch (error) {
-    next(error);
+    console.error(error);
+    res.status(500).json({ message: "Error hard deleting user" });
   }
 });
 
@@ -46,7 +46,7 @@ userRouter.delete("/:id", async (req, res) => {
     res.status(200).json(await userController.softDelete(id));
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error soft deleting user(s)" });
+    res.status(500).json({ message: "Error soft deleting user" });
   }
 });
 
