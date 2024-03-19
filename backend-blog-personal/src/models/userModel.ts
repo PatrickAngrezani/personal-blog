@@ -2,6 +2,7 @@ import { CreateUserDto } from "../db/dto/createUserDto.dto";
 import { Pool, QueryResult } from "pg";
 import { GetUsersResponseDto } from "../db/dto/response/getUserResponseDto.dto";
 import { NotFoundException } from "../errors/notFoundException";
+import { DeleteUserResponseDto } from "../db/dto/response/deleteUserResponseDto.dto";
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -70,12 +71,17 @@ export default class UserModel {
       if (checkDeletedUser[0].deletedAt)
         throw new Error("User already soft deleted");
 
-      const result: QueryResult = await client.query(
+      await client.query(
         "UPDATE blog.user SET deleted_at = NOW() WHERE id = $1",
         [id]
       );
 
-      return result.rows;
+      const response: DeleteUserResponseDto = {
+        id,
+        deletedAt: this.formatDate(Date.now()),
+      };
+
+      return response;
     } catch (error) {
       throw error;
     } finally {
@@ -147,6 +153,20 @@ export default class UserModel {
     } finally {
       client.release();
     }
+  }
+
+  formatDate(dateNow: number): string {
+    const deletedAt = new Date(dateNow).toLocaleString("pt-BR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "America/Sao_Paulo",
+    });
+
+    return deletedAt;
   }
 
   rowToDto(row: any) {

@@ -43,8 +43,7 @@ userRouter.delete("/:id", async (req, res) => {
   }
 
   try {
-    await userController.softDelete(id);
-    res.status(200).json("user(s) soft deleted succesfully");
+    res.status(200).json(await userController.softDelete(id));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error soft deleting user(s)" });
