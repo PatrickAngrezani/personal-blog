@@ -106,12 +106,12 @@ export default class UserModel {
     try {
       if (!id) {
         const result: QueryResult = await client.query(
-          "SELECT first_name, last_name, email, national_id, deleted_at FROM blog.user"
+          "SELECT * FROM blog.user"
         );
 
         users = result.rows.map(this.rowToDto);
       } else {
-        const query = `SELECT first_name, last_name, email, national_id, deleted_at FROM blog.user WHERE id = $1`;
+        const query = `SELECT * FROM blog.user WHERE id = $1`;
         const values = [id];
 
         const result = await client.query(query, values);
@@ -145,7 +145,8 @@ export default class UserModel {
           email = $3,
           user_token = $4,
           post_limit = $5,
-          number_of_comments = $6
+          number_of_comments = $6,
+          updated_at = NOW()
         WHERE id = $7
         RETURNING id;
 `;
