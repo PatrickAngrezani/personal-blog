@@ -25,3 +25,14 @@ export const connectToDatabase = async (): Promise<void> => {
     await db.end();
   }
 };
+
+export const disconnectToDatabase = async (): Promise<void> => {
+  const db = new Client(dbConfig);
+  try {
+    await db.end();
+    console.log("Disconnected to database succesfully");
+  } catch (error) {
+    console.error("Error disconnecting to database");
+    throw error;
+  }
+};
