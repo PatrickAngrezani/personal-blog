@@ -1,7 +1,7 @@
-import express, { Application, Request, Response, NextFunction } from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import { connectToDatabase } from "./db/db";
-import { userRouter } from "./routes/usersRoute";
+import userRouter from "./routes/usersRoute";
 
 const PORT: number = 8000;
 
@@ -26,3 +26,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+export default app;

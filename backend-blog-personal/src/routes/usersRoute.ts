@@ -8,7 +8,7 @@ import { UpdateUserDto } from "../db/dto/updateUserDto.dto";
 const userModel = new UserModel();
 const userController = new UserController(userModel);
 
-export const userRouter: Router = express.Router();
+const userRouter: Router = express.Router();
 
 userRouter.post("/create", async (req, res, next) => {
   const dto: CreateUserDto = req.body;
@@ -73,3 +73,5 @@ userRouter.put("/update", async (req, res) => {
     res.status(500).json({ message: "Error updating user" });
   }
 });
+
+export default userRouter;

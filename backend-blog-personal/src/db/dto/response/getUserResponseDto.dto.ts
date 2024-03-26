@@ -3,7 +3,7 @@ export class GetUsersResponseDto {
   lastName: string;
   email: string;
   nationalId: number;
-  deletedAt: Date;
+  deletedAt?: Date;
 
   constructor(
     firstName: string,
