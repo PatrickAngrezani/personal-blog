@@ -6,12 +6,15 @@ import { DeleteUserResponseDto } from "../db/dto/response/deleteUserResponseDto.
 import { CreateUserResponseDto } from "../db/dto/response/createUserResponseDto.dto";
 import { UpdateUserDto } from "../db/dto/updateUserDto.dto";
 import { UpdateUserResponseDto } from "../db/dto/response/updateUserResponseDto.dto";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
+  password: String(process.env.DB_PASSWORD),
   port: Number(process.env.DB_PORT),
 });
 
@@ -125,6 +128,7 @@ export default class UserModel {
 
       return users;
     } catch (error) {
+      console.error(error);
       throw error;
     } finally {
       client.release();
