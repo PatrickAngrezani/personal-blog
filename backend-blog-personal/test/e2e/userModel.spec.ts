@@ -1,29 +1,27 @@
-import app from "../../src/index";
 import request from "supertest";
-import { expect, jest, test } from "@jest/globals";
-import { Client } from "pg";
+import { expect, test } from "@jest/globals";
 import dotenv from "dotenv";
 import { connectToDatabase, disconnectToDatabase } from "../../src/db/db";
+import express, { Application } from "express";
+import cors from "cors";
+import userRouter from "../../src/routes/usersRoute";
 
 dotenv.config();
 
-const dbConfig = {
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: String(process.env.DB_PASSWORD),
-  port: Number(process.env.DB_PORT),
-};
+let server: any;
+const app: Application = express();
+app.use(cors());
+app.use(express.json());
 
-let db: Client;
-
-beforeEach(async () => {
-  db = new Client(dbConfig);
+beforeAll(async () => {
   await connectToDatabase();
+  app.use("/users", userRouter);
+  server = app.listen();
 });
 
-afterEach(async () => {
+afterAll(async () => {
   await disconnectToDatabase();
+  await server.close();
 });
 
 describe("UserModel", () => {
