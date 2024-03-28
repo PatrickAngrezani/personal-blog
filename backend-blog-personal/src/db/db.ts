@@ -3,15 +3,27 @@ import dotenv from "dotenv";
 
 const { Client } = pkg;
 
-dotenv.config();
+dotenv.config({ override: true });
 
-const dbConfig = {
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: Number(process.env.DB_PORT),
+let dbConfig: any;
+
+dbConfig = {
+  user: process.env.DB_USER ? process.env.DB_USER : process.env.DB_USER_TEST,
+  host: process.env.DB_HOST ? process.env.DB_HOST : process.env.DB_HOST_TEST,
+  database: process.env.DB_DATABASE
+    ? process.env.DB_DATABASE
+    : process.env.DB_DATABASE_TEST,
+  password: String(
+    process.env.DB_PASSWORD
+      ? process.env.DB_PASSWORD
+      : process.env.DB_PASSWORD_TEST
+  ),
+  port: Number(
+    process.env.DB_PORT ? process.env.DB_PORT : process.env.DB_PORT_TEST
+  ),
 };
+
+console.log({ dbConfig });
 
 export const connectToDatabase = async (): Promise<void> => {
   const db = new Client(dbConfig);

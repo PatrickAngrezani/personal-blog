@@ -35,7 +35,7 @@ describe("UserModel", () => {
 
   test("should get an users with ID provided", async () => {
     const response = await request(app).get(
-      "/users/6f028f78-7f13-4fb7-ad97-eb98afc277e6"
+      "/users/8550d2e9-93de-4703-a1be-f09edd2cb182"
     );
     const users = response.body;
 
