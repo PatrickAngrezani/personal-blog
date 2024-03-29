@@ -43,7 +43,7 @@ export default class UserModel {
           dto.firstName,
           dto.lastName,
           dto.email,
-          dto.nationalId,
+          this.formatNationalId(Number(dto.nationalId)),
           dto.postLimit || 10,
           false,
           dto.numberOfComments || 100,

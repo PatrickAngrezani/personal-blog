@@ -1,8 +1,8 @@
 export class CreateUserResponseDto {
   email: string;
-  nationalId: number;
+  nationalId: string;
 
-  constructor(email: string, nationalId: number) {
+  constructor(email: string, nationalId: string) {
     this.email = email;
     this.nationalId = nationalId;
   }
