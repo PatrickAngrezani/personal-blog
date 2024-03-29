@@ -27,7 +27,7 @@ export const connectToDatabase = async (): Promise<void> => {
   const db = new Client(dbConfig);
   try {
     await db.connect();
-    console.log("Connected to database succesfully");
+    console.log("Connected to database succesfully: ", dbConfig);
   } catch (error) {
     console.error("Error connecting to database");
     throw error;
