@@ -2,7 +2,7 @@ export class CreateUserDto {
   firstName: string;
   lastName: string;
   email: string;
-  nationalId: number;
+  nationalId: string;
   postLimit: number;
   blocked: boolean;
   numberOfComments: number;
@@ -11,7 +11,7 @@ export class CreateUserDto {
     firstName: string,
     lastName: string,
     email: string,
-    nationalId: number,
+    nationalId: string,
     postLimit: number,
     blocked: boolean,
     numberOfComments: number

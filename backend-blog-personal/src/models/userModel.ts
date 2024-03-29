@@ -245,4 +245,25 @@ export default class UserModel {
       row.deleted_at
     );
   }
+
+  generateRandomNumber(digits: number) {
+    let number = "";
+
+    for (let i = 0; i < digits; i++) {
+      number += String(Math.floor(Math.random() * 10));
+    }
+
+    console.log({ randomnumber: number });
+
+    return number;
+  }
+
+  formatNationalId(number: number) {
+    const nationalIdString = String(number);
+    const parts = nationalIdString.slice(0, 9);
+    const numberGroups = parts.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    console.log({ numberGroups });
+
+    return numberGroups + "-" + nationalIdString.slice(-2);
+  }
 }
