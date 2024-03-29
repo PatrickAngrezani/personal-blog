@@ -23,8 +23,6 @@ dbConfig = {
   ),
 };
 
-console.log({ dbConfig });
-
 export const connectToDatabase = async (): Promise<void> => {
   const db = new Client(dbConfig);
   try {
