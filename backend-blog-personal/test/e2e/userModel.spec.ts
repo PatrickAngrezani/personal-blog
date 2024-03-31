@@ -17,6 +17,8 @@ app.use(express.json());
 const userModel = new UserModel();
 
 beforeAll(async () => {
+  if (process.env.DB_DATABASE === "postgres")
+    throw new Error("incorrect database");
   await connectToDatabase();
   app.use("/users", userRouter);
   server = app.listen();
@@ -38,7 +40,7 @@ describe("User - GET '/'", () => {
 
   test("should get an users with ID provided", async () => {
     const response = await request(app).get(
-      "/users/8550d2e9-93de-4703-a1be-f09edd2cb182"
+      "/users/f1ec1a48-0ffc-4d6b-8bb6-f2fa47d89d01"
     );
     const users = response.body;
 
@@ -106,13 +108,52 @@ describe("User - POST '/create'", () => {
       numberOfComments: 9,
     };
 
-    console.log({ createUserDto });
-
     const response = await request(app)
       .post("/users/create")
       .send(createUserDto);
 
     expect(response.status).toEqual(201);
     expect(response.body).toBeDefined();
+  });
+
+  test('should throw an error "missing email or national_id"', async () => {
+    const createUserDto = {
+      firstName,
+      lastName,
+      nationalId: userModel.formatNationalId(
+        Number(userModel.generateRandomNumber(11))
+      ),
+      postLimit: 2,
+      blocked: false,
+      numberOfComments: 9,
+    };
+
+    const response = await request(app)
+      .post("/users/create")
+      .send(createUserDto);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toMatchObject({ message: "Error creating user" });
+  });
+
+  test('should throw an error "email or national_id is not available"', async () => {
+    const createUserDto = {
+      firstName,
+      lastName,
+      email: `jenniferbrown21@email.com`,
+      nationalId: userModel.formatNationalId(
+        Number(userModel.generateRandomNumber(11))
+      ),
+      postLimit: 2,
+      blocked: false,
+      numberOfComments: 9,
+    };
+
+    const response = await request(app)
+      .post("/users/create")
+      .send(createUserDto);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toMatchObject({ message: "Error creating user" });
   });
 });

@@ -253,8 +253,6 @@ export default class UserModel {
       number += String(Math.floor(Math.random() * 10));
     }
 
-    console.log({ randomnumber: number });
-
     return number;
   }
 
@@ -262,7 +260,6 @@ export default class UserModel {
     const nationalIdString = String(number);
     const parts = nationalIdString.slice(0, 9);
     const numberGroups = parts.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    console.log({ numberGroups });
 
     return numberGroups + "-" + nationalIdString.slice(-2);
   }
