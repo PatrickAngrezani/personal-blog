@@ -149,6 +149,8 @@ export default class UserModel {
     const user = await this.getUsers(dto.id);
     if (!user) throw new NotFoundException("User not found");
 
+    if (!dto.email) throw new Error("Email should be provided");
+
     try {
       const query = `
         UPDATE blog.user

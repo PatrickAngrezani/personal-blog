@@ -162,8 +162,8 @@ describe("User - POST '/create'", () => {
 describe("User - PUT 'update'", () => {
   test("should update user", async () => {
     const updateUserDto: UpdateUserDto = {
-      id: "e1a3441c-9967-4a9b-af8d-2f1c23546fce",
-      email: "jenniferbrownupdated@email.com",
+      id: "f1ec1a48-0ffc-4d6b-8bb6-f2fa47d89d01",
+      email: "michaelrodriguezupdated@email.com",
       numberOfComments: 11,
       postLimit: 3,
       userToken: 123456,
@@ -176,5 +176,38 @@ describe("User - PUT 'update'", () => {
     expect(response.status).toEqual(200);
     expect(response.body).toBeDefined();
     expect(response.body.id).toEqual(updateUserDto.id);
+  });
+
+  test("should throw error when there is no user with ID provided", async () => {
+    const updateUserDto: UpdateUserDto = {
+      id: "random-id",
+      email: "randomemail@email.com",
+      numberOfComments: 11,
+      postLimit: 3,
+      userToken: 123456,
+    };
+
+    const response = await request(app)
+      .put("/users/update")
+      .send(updateUserDto);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({ message: "Error updating user" });
+  });
+
+  test("should throw error when email not provided in DTO", async () => {
+    const updateUserDto = {
+      id: "75faa509-9a84-405e-b67e-87c5e38a310d",
+      numberOfComments: 11,
+      postLimit: 3,
+      userToken: 123456,
+    };
+
+    const response = await request(app)
+      .put("/users/update")
+      .send(updateUserDto);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({ message: "Error updating user" });
   });
 });
