@@ -7,6 +7,7 @@ import cors from "cors";
 import userRouter from "../../src/routes/usersRoute";
 import { CreateUserDto } from "../../src/db/dto/createUserDto.dto";
 import UserModel from "../../src/models/userModel";
+import { UpdateUserDto } from "../../src/db/dto/updateUserDto.dto";
 
 dotenv.config();
 
@@ -140,7 +141,7 @@ describe("User - POST '/create'", () => {
     const createUserDto = {
       firstName,
       lastName,
-      email: `jenniferbrown21@email.com`,
+      email: `michaelrodriguez86@email.com`,
       nationalId: userModel.formatNationalId(
         Number(userModel.generateRandomNumber(11))
       ),
@@ -155,5 +156,25 @@ describe("User - POST '/create'", () => {
 
     expect(response.status).toEqual(500);
     expect(response.body).toMatchObject({ message: "Error creating user" });
+  });
+});
+
+describe("User - PUT 'update'", () => {
+  test("should update user", async () => {
+    const updateUserDto: UpdateUserDto = {
+      id: "e1a3441c-9967-4a9b-af8d-2f1c23546fce",
+      email: "jenniferbrownupdated@email.com",
+      numberOfComments: 11,
+      postLimit: 3,
+      userToken: 123456,
+    };
+
+    const response = await request(app)
+      .put("/users/update")
+      .send(updateUserDto);
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toBeDefined();
+    expect(response.body.id).toEqual(updateUserDto.id);
   });
 });
