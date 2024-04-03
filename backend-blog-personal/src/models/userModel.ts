@@ -7,6 +7,7 @@ import { CreateUserResponseDto } from "../db/dto/response/createUserResponseDto.
 import { UpdateUserDto } from "../db/dto/updateUserDto.dto";
 import { UpdateUserResponseDto } from "../db/dto/response/updateUserResponseDto.dto";
 import dotenv from "dotenv";
+import { randomBytes, randomInt } from "crypto";
 
 dotenv.config();
 
@@ -38,13 +39,14 @@ export default class UserModel {
 
     try {
       const result: QueryResult = await client.query(
-        "INSERT INTO blog.user (first_name, last_name, email, national_id, post_limit, blocked, number_of_comments) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        "INSERT INTO blog.user (first_name, last_name, email, national_id, post_limit, user_token, blocked, number_of_comments) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
         [
           dto.firstName,
           dto.lastName,
           dto.email,
           this.formatNationalId(dto.nationalId),
           dto.postLimit || 10,
+          this.generateUserToken(),
           false,
           dto.numberOfComments || 100,
         ]
@@ -278,5 +280,10 @@ export default class UserModel {
     const numberGroups = parts.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
     return numberGroups + "-" + number.slice(-2);
+  }
+
+  generateUserToken() {
+    const token = randomBytes(3).toString("hex").slice(0, 6);
+    return token.toUpperCase();
   }
 }
