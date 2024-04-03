@@ -43,7 +43,7 @@ export default class UserModel {
           dto.firstName,
           dto.lastName,
           dto.email,
-          this.formatNationalId(Number(dto.nationalId)),
+          this.formatNationalId(dto.nationalId),
           dto.postLimit || 10,
           false,
           dto.numberOfComments || 100,
@@ -273,11 +273,10 @@ export default class UserModel {
     return number;
   }
 
-  formatNationalId(number: number) {
-    const nationalIdString = String(number);
-    const parts = nationalIdString.slice(0, 9);
+  formatNationalId(number: string) {
+    const parts = number.slice(0, 9);
     const numberGroups = parts.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-    return numberGroups + "-" + nationalIdString.slice(-2);
+    return numberGroups + "-" + number.slice(-2);
   }
 }

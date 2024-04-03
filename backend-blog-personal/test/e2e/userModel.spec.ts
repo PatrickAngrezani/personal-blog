@@ -93,6 +93,7 @@ describe("User - POST '/create'", () => {
   const lastNameIndex = Math.floor(Math.random() * lastNames.length);
   const firstName = firstNames[firstNameIndex];
   const lastName = lastNames[lastNameIndex];
+  const randomNumber = userModel.generateRandomNumber(11);
 
   test("should create a new user", async () => {
     const createUserDto: CreateUserDto = {
@@ -101,9 +102,7 @@ describe("User - POST '/create'", () => {
       email: `${firstName}${lastName}${userModel.generateRandomNumber(
         2
       )}@email.com`.toLowerCase(),
-      nationalId: userModel.formatNationalId(
-        Number(userModel.generateRandomNumber(11))
-      ),
+      nationalId: userModel.formatNationalId(randomNumber),
       postLimit: 2,
       blocked: false,
       numberOfComments: 9,
@@ -122,7 +121,7 @@ describe("User - POST '/create'", () => {
       firstName,
       lastName,
       nationalId: userModel.formatNationalId(
-        Number(userModel.generateRandomNumber(11))
+        userModel.generateRandomNumber(11)
       ),
       postLimit: 2,
       blocked: false,
@@ -143,7 +142,7 @@ describe("User - POST '/create'", () => {
       lastName,
       email: `michaelrodriguez86@email.com`,
       nationalId: userModel.formatNationalId(
-        Number(userModel.generateRandomNumber(11))
+        userModel.generateRandomNumber(11)
       ),
       postLimit: 2,
       blocked: false,
