@@ -152,28 +152,43 @@ export default class UserModel {
     if (!dto.email) throw new Error("Email should be provided");
 
     try {
-      const query = `
+      let query = `
         UPDATE blog.user
-        SET first_name = $1,
-          last_name = $2,
-          email = $3,
-          user_token = $4,
-          post_limit = $5,
-          number_of_comments = $6,
-          updated_at = NOW()
-        WHERE id = $7
-        RETURNING id;
-`;
+        SET `;
 
-      const updateData = [
-        dto.firstName,
-        dto.lastName,
-        dto.email,
-        dto.userToken,
-        dto.postLimit,
-        dto.numberOfComments,
-        dto.id,
-      ];
+      const updateFields = [];
+      const updateData = [];
+
+      if (dto.firstName) {
+        updateFields.push("first_name = $" + (updateFields.length + 1));
+        updateData.push(dto.firstName);
+      }
+
+      if (dto.lastName) {
+        updateFields.push("last_name = $" + (updateFields.length + 1));
+        updateData.push(dto.lastName);
+      }
+
+      updateFields.push("email = $" + (updateFields.length + 1));
+      updateData.push(dto.email);
+      updateFields.push("user_token = $" + (updateFields.length + 1));
+      updateData.push(dto.userToken);
+      updateFields.push("post_limit = $" + (updateFields.length + 1));
+      updateData.push(dto.postLimit);
+      updateFields.push("number_of_comments = $" + (updateFields.length + 1));
+      updateData.push(dto.numberOfComments);
+
+      query += updateFields.join(", ");
+      query +=
+        `, updated_at = NOW() 
+                  WHERE id = $` +
+        (updateData.length + 1);
+
+      updateData.push(dto.id);
+
+      query += `
+        RETURNING id;
+      `;
 
       const result: QueryResult = await client.query(query, updateData);
       const response: UpdateUserResponseDto = {
